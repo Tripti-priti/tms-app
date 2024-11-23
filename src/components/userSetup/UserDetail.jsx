@@ -63,7 +63,7 @@ const UserDetail = () => {
 
     const fetchRoles = async () => {
 
-        await axios.get('http://localhost:3001/api/role')
+        await axios.get('https://tms-api-ashy.vercel.app/api/role')
             .then((res) => {
                 let data = res.data;
                 console.log(data)
@@ -76,7 +76,7 @@ const UserDetail = () => {
     }
     const fetchUserDetails = async () => {
         params.id ?
-            await axios.get('http://localhost:3001/api/users/' + params.id)
+            await axios.get('https://tms-api-ashy.vercel.app/api/users/' + params.id)
                 .then((res) => {
                     let data = res.data;
                     console.log(data)
@@ -103,7 +103,7 @@ const UserDetail = () => {
     const SaveUser = () => {
         debugger
         if (action === 'Save') {
-            axios.post('http://localhost:3001/api/users', {
+            axios.post('https://tms-api-ashy.vercel.app/api/users', {
                 "role": rolesData,
                 "comp_id": "67322719306557f042aba5a7",
                 "saluation": saluation,
@@ -135,7 +135,7 @@ const UserDetail = () => {
             setDisabled(false);
         } else {
 
-            axios.put('http://localhost:3001/api/users/' + userId, {
+            axios.put('https://tms-api-ashy.vercel.app/api/users/' + userId, {
                 "role": rolesData,
                 "comp_id": "67322719306557f042aba5a7",
                 "saluation": saluation,
