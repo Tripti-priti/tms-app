@@ -13,7 +13,7 @@ const UserList = () => {
       <Card>
       <CardContent style={{overflowX:'scroll'}}>
         <Card style={{padding:'10px'}}>
-            <Link to={'/userdetail'}><Button variant='outlined'>Create New</Button></Link>
+            <Link to={'/master/userdetail'}><Button variant='outlined'>Create New</Button></Link>
         </Card>
         <UserTable />
         </CardContent>

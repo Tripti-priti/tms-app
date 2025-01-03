@@ -21,7 +21,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import {AppProvider} from '@toolpad/core/react-router-dom';
 // import Grid from '@mui/material/Grid2';
 import { Link, Outlet } from "react-router-dom";
-import { Chip, Menu, TextField, Typography } from '@mui/material';
+import { Avatar, Button, Chip, Menu, TextField, Typography } from '@mui/material';
 
 const demoTheme = extendTheme({
   colorSchemes: { light: true, dark: true },
@@ -57,6 +57,60 @@ const Skeleton = styled('div')(({ theme, height }) => ({
   height,
   content: '" "',
 }));
+function PositionedMenu(props) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [username, setUsername] = React.useState("");
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  React.useEffect(()=>{
+    const userLogindata = localStorage.getItem("userLoginDetails");
+  if(userLogindata!==null&&userLogindata!==undefined&&userLogindata!==""){
+    let userData = JSON.parse(userLogindata);
+      setUsername(userData[0].username)
+  }
+  },[])
+  return (
+    <div>
+      <Button
+        id="demo-positioned-button"
+        aria-controls={open ? 'demo-positioned-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        <Avatar alt={username} src="/static/images/avatar/1.jpg" title={username} sx={{ width: 32, height: 32 }} />
+      </Button>
+      <Menu
+        id="demo-positioned-menu"
+        aria-labelledby="demo-positioned-button"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        style={{
+          marginTop:'30px',
+          marginRight:'80px'
+        }}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}>My account</MenuItem>
+       <Link to={'/'} style={{textDecoration:'none',color:'grey'}}> <MenuItem onClick={()=>props.UserLogOut()}>Logout</MenuItem></Link>
+      </Menu>
+    </div>
+  );
+}
 
 export default function Layout(props) {
   const { window } = props;
@@ -130,16 +184,54 @@ export default function Layout(props) {
       icon: <DashboardIcon />,
     },
     {
-      segment: 'userlist',
-      title: 'Users',
-      icon: <DashboardIcon />,
-      
+      segment: 'master',
+      title: 'Masters',
+      icon: <BarChartIcon />,
+      children: [
+        {
+          segment: 'userlist',
+          title: 'Users',
+          icon: <DashboardIcon />,
+          
+        },
+        {
+          segment: 'roledetail',
+          title: 'Role Setup',
+          icon: <DashboardIcon />,
+          
+        },
+        {
+          segment: 'projectdetails',
+          title: 'Project Setup',
+          icon: <DashboardIcon />,
+          
+        },
+        {
+          segment: 'modulesetup',
+          title: 'Module And Process',
+          icon: <DashboardIcon />,
+          
+        },
+        {
+          segment: 'featuresetup',
+          title: 'Feature Setup',
+          icon: <DashboardIcon />,
+          
+        },
+        // {
+        //   segment: 'procesdetail',
+        //   title: 'Process Setup',
+        //   icon: <DashboardIcon />,
+          
+        // },
+      ],
     },
+    
     {
-      segment: 'orders',
-      title: 'Orders',
+      segment: 'userTickets',
+      title: 'User Ticket',
       icon: <ShoppingCartIcon />,
-      action: <Chip label={7} color="primary" size="small" />,
+      // action: <Chip label={7} color="primary" size="small" />,
     },
     {
       kind: 'divider',
@@ -221,6 +313,7 @@ export default function Layout(props) {
           sx={{ display: { xs: 'none', md: 'inline-block' }, mr: 1 }}
         />
         <ThemeSwitcher />
+        <PositionedMenu UserLogOut={props.UserLogOut} user={props.user}/>
       </Stack>
     );
   }

@@ -26,6 +26,7 @@ const UserDetail = () => {
     const [action, setAction] = useState('Save');
     const [disabled, setDisabled] = useState(true);
     const [userId,setUsetId]=useState("");
+    const [compId,setCompId]=useState("");
 
     const [image, setImage] = useState("https://mui.com/static/images/cards/contemplative-reptile.jpg");
     const params = useParams();
@@ -58,12 +59,15 @@ const UserDetail = () => {
     useEffect(() => {
         fetchRoles();
         fetchUserDetails();
-
+        let userDetails = localStorage.getItem("userLoginDetails");
+        console.log(userDetails)
+        userDetails = userDetails && JSON.parse(userDetails);
+        userDetails && setCompId(userDetails[0].comp_id._id);
     }, []);
 
     const fetchRoles = async () => {
 
-        await axios.get('https://tms-api-ashy.vercel.app/api/role')
+        await axios.get('http://localhost:3001/api/role')
             .then((res) => {
                 let data = res.data;
                 console.log(data)
@@ -76,7 +80,7 @@ const UserDetail = () => {
     }
     const fetchUserDetails = async () => {
         params.id ?
-            await axios.get('https://tms-api-ashy.vercel.app/api/users/' + params.id)
+            await axios.get('http://localhost:3001/api/users/' + params.id)
                 .then((res) => {
                     let data = res.data;
                     console.log(data)
@@ -88,8 +92,13 @@ const UserDetail = () => {
                     let _dob = new Date(data.dob).toISOString().slice(0, 10);
                     setDob(_dob);
                     setPassword(data.password);
+                    console.log(data.role)
+                    debugger
                     // setRole(data.role ? data.role : "");
-                    setRolesData(data.role ? data.role : []);
+                    setRolesData(Array.isArray(data.role) ? data.role.map((item)=>{
+                        return {role:item.role_id._id,roleName:item.role_id.name}
+                    }) : []);
+                  
                     setActive(data.is_active === 'Y' ? true : false)
                     setUsetId(params.id)
                 }).catch((err) => {
@@ -103,9 +112,11 @@ const UserDetail = () => {
     const SaveUser = () => {
         debugger
         if (action === 'Save') {
-            axios.post('https://tms-api-ashy.vercel.app/api/users', {
-                "role": rolesData,
-                "comp_id": "67322719306557f042aba5a7",
+            axios.post('http://localhost:3001/api/users', {
+                "role": rolesData.map((itm)=>{
+                    return {role_id:itm.role};
+                }),
+                "comp_id": compId,
                 "saluation": saluation,
                 "username": username,
                 "email": email,
@@ -135,9 +146,11 @@ const UserDetail = () => {
             setDisabled(false);
         } else {
 
-            axios.put('https://tms-api-ashy.vercel.app/api/users/' + userId, {
-                "role": rolesData,
-                "comp_id": "67322719306557f042aba5a7",
+            axios.put('http://localhost:3001/api/users/' + userId, {
+                "role": rolesData.map((itm)=>{
+                    return {role_id:itm.role};
+                }),
+                "comp_id": compId,
                 "saluation": saluation,
                 "username": username,
                 "email": email,
@@ -182,7 +195,8 @@ const UserDetail = () => {
         if(role!==""){
             setRolesData([
                 ...rolesData, {
-                    role: role
+                    role: role,
+                    roleName:roles.filter(v => v._id == role)[0].name
                 }
             ]);
             setRole("");
@@ -207,7 +221,7 @@ const UserDetail = () => {
             <Card>
                 <CardContent>
                     <Button variant="outlined" style={{ margin: '10px' }} onClick={() => SaveUser()}>{action}</Button>
-                    <Link to={'/userlist'}><Button variant="outlined" style={{ margin: '10px' }}>Back to list</Button></Link>
+                    <Link to={'/master/userlist'}><Button variant="outlined" style={{ margin: '10px' }}>Back to list</Button></Link>
                     <Box sx={{ flexGrow: 1 }}>
                         <Grid container spacing={{ xs: 1, md: 1 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                             <Grid size={{ xs: 2, sm: 4, md: 8 }} >
@@ -287,7 +301,9 @@ const UserDetail = () => {
                                             <FormControl variant={variant} size="small" style={{ width: '50%' }}>
                                                 <InputLabel >Role</InputLabel>
                                                 <Select label="Role" disabled={disabled}  style={{ width: '98%' }}
-                                                    value={role} onChange={(e) => { setRole(e.target.value) }} >
+                                                    value={role} onChange={(e) => { 
+                                                        setRole(e.target.value);
+                                                         }} >
                                                     <MenuItem value=""><em>---Select---</em></MenuItem>
                                                     {
                                                         roles.map((item, index) => {
@@ -323,7 +339,7 @@ const UserDetail = () => {
                                                             rolesData.map((item, index) => {
                                                                 return <TableRow key={index}>
                                                                     <TableCell>{index + 1}</TableCell>
-                                                                    <TableCell>{roles.filter(v => v._id == item.role)[0].name}</TableCell>
+                                                                    <TableCell>{item.roleName}</TableCell>
                                                                     <TableCell>{disabled ? "" :<DeleteIcon onClick={() => Delete(item.role)}/>}</TableCell>
                                                                 </TableRow>
                                                             })

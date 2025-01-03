@@ -41,3 +41,9 @@ color: black;
     transform: rotate(360deg);
   }
 }
+.css-7iurs7-MuiAccordionSummary-content.Mui-expanded {
+  margin: 0px 0 !important;
+}
+.css-18xscy5-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded {
+  min-height: 45px !important;
+}

@@ -7,24 +7,34 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import axios from 'axios';
-import { RemoveRedEye } from '@mui/icons-material';
+import { Delete, RemoveRedEye } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { colors } from '@mui/material';
 import { DataGrid, GridToolbar, renderActionsCell } from '@mui/x-data-grid';
 import { ClassNames } from '@emotion/react';
+import AlertMessage from '../shared/AlertMessage';
+import { useState } from 'react';
 
 
 
 const UserTable = () => {
 
-  const [userData,setUserData] = React.useState([]);
-
+  const [userData,setUserData] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState(false);
+  const [severity, setSeverity] = useState('success');
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+    setOpen(false);
+  };  
   React.useEffect(()=>{
     fetchUserList();
   },[])
 
   const fetchUserList = ()=>{
-    axios.get('http://localhost:3001/api/users')
+    axios.get('https://tms-api-ashy.vercel.app/api/users')
     .then((res)=>{
       console.log(res.data);
       setUserData(res.data);
@@ -53,7 +63,18 @@ const columns = [
   },
   renderCell: (params) => (
     <>
-      <Link to={'/userdetail/'+params.id} ><RemoveRedEye/></Link>
+      <Link to={'/master/userdetail/'+params.id} ><RemoveRedEye/></Link>
+      <Link onClick={()=>{
+        axios.delete("http://localhost:3001/api/users/"+params.id)
+          .then(()=>{
+            setSeverity('success')
+            setMessage('User Deleted Successfully.')
+            setOpen(true);
+            fetchUserList();
+          }).catch(()=>{
+            alert("Try Again.")
+          })
+      }} ><Delete/></Link>
     </>
   ),
 },
@@ -93,6 +114,7 @@ const columns = [
         </TableBody>
       </Table>
     </TableContainer> */}
+     <AlertMessage handleClose={handleClose} open={open} message={message} severity={severity} />
      <div style={{ height: 500, width: '100%'}}>
      <DataGrid rows={userData} columns={columns} rowHeight={30}
      slots={{
