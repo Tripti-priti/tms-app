@@ -1,20 +1,12 @@
 import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import axios from 'axios';
 import { Delete, RemoveRedEye } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { colors } from '@mui/material';
-import { DataGrid, GridToolbar, renderActionsCell } from '@mui/x-data-grid';
-import { ClassNames } from '@emotion/react';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AlertMessage from '../shared/AlertMessage';
 import { useState } from 'react';
 
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 const UserTable = () => {
@@ -32,9 +24,10 @@ const UserTable = () => {
   React.useEffect(()=>{
     fetchUserList();
   },[])
+  // https://tms-api-ashy.vercel.app/
 
   const fetchUserList = ()=>{
-    axios.get('https://tms-api-ashy.vercel.app/api/users')
+    axios.get(apiUrl+'/api/users')
     .then((res)=>{
       console.log(res.data);
       setUserData(res.data);
@@ -65,7 +58,7 @@ const columns = [
     <>
       <Link to={'/master/userdetail/'+params.id} ><RemoveRedEye/></Link>
       <Link onClick={()=>{
-        axios.delete("http://localhost:3001/api/users/"+params.id)
+        axios.delete(apiUrl+"/api/users/"+params.id)
           .then(()=>{
             setSeverity('success')
             setMessage('User Deleted Successfully.')
