@@ -9,6 +9,7 @@ import DialogBox from '../shared/DialogBox';
 
 const ModuleSetup = () => {
   const [open, setOpen] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
   const [message, setMessage] = useState('');
   const [severity, setSeverity] = useState('success');
   const [disabled, setDisabled] = useState(false);
@@ -110,8 +111,8 @@ const editModule = (id) =>{
   const columns = [
     { field: 'srno', headerName: 'Sr No.', width: 100 },
     { field: 'projectname', headerName: 'Project Name', width: 150 },
-    { field: 'modulename', headerName: 'Module Name', width: 150 },
-    { field: 'description', headerName: 'Description', width: 150 },
+    { field: 'modulename', headerName: 'Module Name', width: 200 },
+    { field: 'description', headerName: 'Description', width: 250 },
     {
       field: 'action', headerName: 'Action', width: 200
       , valueGetter: (value) => {
@@ -137,6 +138,13 @@ const editModule = (id) =>{
       console.log(res.data);
       setOpen(false);
       fetchDetails();
+      setOpenAlert(true);
+      setMessage(res.data.message);
+      if(res.data.message==="Deleted Successfully."){
+        setSeverity('success')
+      }else{
+        setSeverity('warning')
+      }
     }).catch((error)=>{
       console.log(error);
     });
@@ -145,7 +153,7 @@ const editModule = (id) =>{
         if (reason === 'clickaway') {
           return;
         }
-        setOpen(false);
+        setOpenAlert(false);
       };
 
 
@@ -153,7 +161,7 @@ const editModule = (id) =>{
   return (
     
     <div>
-    <AlertMessage handleClose={handleClose} open={open} message={message} severity={severity} />
+    <AlertMessage handleClose={handleClose} open={openAlert} message={message} severity={severity} />
     <Card>
       <CardContent >
         <Grid2 container spacing={{ xs: 1, md: 1 }} columns={{ xs: 4, sm: 8, md: 12 }}>

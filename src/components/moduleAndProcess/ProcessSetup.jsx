@@ -54,7 +54,7 @@ const projectchange=async(id)=>{
   const ProcessListData = async () => {
     await axios.get('http://localhost:3001/api/process').then((res) => {
       setProcessData(res.data.map((item, index) => {
-        console.log(res.data)
+        console.log(item)
         return { id: item._id, srno: index + 1, projectname: item.proj_id.name, modulename: item.module_id===null ? "" : item.module_id.name , processname: item.name, description: item.description }
       }))
     }).catch((error) => {
@@ -79,7 +79,7 @@ const projectchange=async(id)=>{
         setOpen(true);
         setMessage('Saved Successfully');
         setSeverity('success')
-        resetProcess();
+        resetProcess(action);
         ProcessListData();
 
       }).catch((error)=>{
@@ -101,7 +101,7 @@ const projectchange=async(id)=>{
         setOpen(true);
         setMessage('Updated Successfully');
         setSeverity('success');
-        resetProcess();
+        resetProcess(action);
         ProcessListData();
         setAction('Save');
       }).catch((error)=>{
@@ -116,14 +116,14 @@ const projectchange=async(id)=>{
   const processColumns = [
     { field: 'srno', headerName: 'Sr No.', width: 100 },
     { field: 'projectname', headerName: 'Project Name', width: 150 },
-    { field: 'modulename', headerName: 'Module Name', width: 150 },
-    { field: 'processname', headerName: 'Process Name', width: 150,
+    { field: 'modulename', headerName: 'Module Name', width: 200 },
+    { field: 'processname', headerName: 'Process Name', width: 200,
       renderCell: (params) => (
         
         <>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span>{params.row.processname}</span>
-            <Link><SubProcessSetup buttonName={<AccountTreeIcon style={{color:'#0000ff'}} />} id={params.id} handleDelete={handleDelete} /></Link>
+            <Link><SubProcessSetup buttonName={<AccountTreeIcon style={{color:'#0000ff'}} titleAccess='Sub Process' />} id={params.id} handleDelete={handleDelete} /></Link>
           </div>
         </>
       ),
@@ -141,8 +141,8 @@ const projectchange=async(id)=>{
       renderCell: (params) => (
         <>
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <Link  ><DialogBox buttonName={<Delete style={{color:'#c31414'}} />} id={params.id} handleDelete={handleDelete} ></DialogBox> </Link>
-            <Link  ><Edit onClick={() => editModule(params.id)} style={{color:'#494747'}} /></Link>
+            <Link  ><DialogBox buttonName={<Delete style={{color:'#c31414'}} titleAccess='Delete' />} id={params.id} handleDelete={handleDelete} ></DialogBox> </Link>
+            <Link  ><Edit onClick={() => editModule(params.id)} style={{color:'#494747'}} titleAccess='Edit' /></Link>
           </div>
         </>
       ),
@@ -179,12 +179,21 @@ const projectchange=async(id)=>{
     })
   };
 
-  const resetProcess = ()=>{
+  const resetProcess = (flag)=>{
+    if(flag==='Save'){
+    // setProjectId("");
+    // setModuleId("");
+    setProcessName("");
+    // setProcessId("");
+    setDescription("");
+    }else{
     setProjectId("");
     setModuleId("");
     setProcessName("");
     setProcessId("");
     setDescription("");
+    }
+    
   }
 
   const handleClose = (event, reason) => {
@@ -247,7 +256,8 @@ const projectchange=async(id)=>{
                 value={description} onChange={(e) => setDescription(e.target.value)} />
             </Grid2>
             <Grid2 size={{ xs: 2, sm: 3, md: 3 }} style={{ padding: 0, margin: 0 }}>
-              <Button variant='outlined'  onClick={()=>SaveModule()}>{action}</Button>
+              <Button variant='outlined' className='mx-2'  onClick={()=>SaveModule()}>{action}</Button>
+              <Button variant='outlined' className='mx-2' onClick={()=>resetProcess("reset")}>Reset</Button>
             </Grid2>
             <Grid2 size={{ xs: 12, sm: 12, md: 12 }} style={{ padding: 0, margin: 0 }}>
               <DataGrid rows={processData} columns={processColumns} rowHeight={30}

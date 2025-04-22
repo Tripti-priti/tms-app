@@ -47,3 +47,13 @@ color: black;
 .css-18xscy5-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded {
   min-height: 45px !important;
 }
+
+.css-17jr764-MuiPaper-root-MuiDialog-paper {
+ 
+  max-width: 1000px !important;
+  max-height: 600px !important;
+}
+.mx-2{
+  margin-left: 5px !important;
+  margin-right: 5px !important;
+}

@@ -18,14 +18,15 @@ import ProjectDetails from './components/projects/ProjectDetails';
 import ProjectList from './components/projects/ProjectList';
 import UserTicketList from './components/userTickets/UserTicketList';
 import UserTicketDetails from './components/userTickets/UserTicketDetails';
-
+import ReleaseSetup from './components/Release/ReleaseSetup';
+const apiUrl = process.env.REACT_APP_API_URL;
 function App() {
 const [user,setUser] = useState([]);
 const UserLogin = async (userdetails)=>{
 
   try {
     const data = {email:userdetails.email.value,password:userdetails.password.value}
-    await axios.post('http://localhost:3001/api/users/validate',data)
+    await axios.post(apiUrl + '/api/users/validate',data)
     .then((res)=>{
       const userData = res.data;
       //console.log(userData);
@@ -44,7 +45,8 @@ const UserLogin = async (userdetails)=>{
 useEffect(()=>{
   const userLogindata = localStorage.getItem("userLoginDetails");
   if(userLogindata!==null&&userLogindata!==undefined&&userLogindata!==""){
-    setUser(userLogindata);
+    if(JSON.parse(userLogindata).length>0)
+      setUser(userLogindata);
   }
 },[user]);
 
@@ -68,6 +70,7 @@ const UserLogOut = ()=>{
           <Route path="/master/procesdetail" element={<ProcessDetails />} />
           <Route path="/master/userdetail/:id" element={<UserDetail />} />
           <Route path="/master/userlist" element={<UserList />} />
+          <Route path="/master/releases" element={<ReleaseSetup />} />
           <Route path="/userTickets" element={<UserTicketList />} />
           <Route path="/userTickets/details" element={<UserTicketDetails />} />
           <Route path="*" element={<NoPage />} />

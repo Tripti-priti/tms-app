@@ -22,6 +22,7 @@ import {AppProvider} from '@toolpad/core/react-router-dom';
 // import Grid from '@mui/material/Grid2';
 import { Link, Outlet } from "react-router-dom";
 import { Avatar, Button, Chip, Menu, TextField, Typography } from '@mui/material';
+import { Person, VerifiedUser } from '@mui/icons-material';
 
 const demoTheme = extendTheme({
   colorSchemes: { light: true, dark: true },
@@ -191,7 +192,7 @@ export default function Layout(props) {
         {
           segment: 'userlist',
           title: 'Users',
-          icon: <DashboardIcon />,
+           icon: <Person />,
           
         },
         {
@@ -215,6 +216,12 @@ export default function Layout(props) {
         {
           segment: 'featuresetup',
           title: 'Feature Setup',
+          icon: <DashboardIcon />,
+          
+        },
+        {
+          segment: 'releases',
+          title: 'Release Setup',
           icon: <DashboardIcon />,
           
         },

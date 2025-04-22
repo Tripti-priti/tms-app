@@ -7,6 +7,7 @@ import AlertMessage from "../shared/AlertMessage";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const UserDetail = () => {
     const [variant, setVariant] = useState("standard");
@@ -67,7 +68,7 @@ const UserDetail = () => {
 
     const fetchRoles = async () => {
 
-        await axios.get('http://localhost:3001/api/role')
+        await axios.get(apiUrl+'/api/role')
             .then((res) => {
                 let data = res.data;
                 console.log(data)
@@ -80,7 +81,7 @@ const UserDetail = () => {
     }
     const fetchUserDetails = async () => {
         params.id ?
-            await axios.get('http://localhost:3001/api/users/' + params.id)
+            await axios.get(apiUrl+'/api/users/' + params.id)
                 .then((res) => {
                     let data = res.data;
                     console.log(data)
@@ -112,7 +113,7 @@ const UserDetail = () => {
     const SaveUser = () => {
         debugger
         if (action === 'Save') {
-            axios.post('http://localhost:3001/api/users', {
+            axios.post(apiUrl+'/api/users', {
                 "role": rolesData.map((itm)=>{
                     return {role_id:itm.role};
                 }),
@@ -146,7 +147,7 @@ const UserDetail = () => {
             setDisabled(false);
         } else {
 
-            axios.put('http://localhost:3001/api/users/' + userId, {
+            axios.put(apiUrl+'/api/users/' + userId, {
                 "role": rolesData.map((itm)=>{
                     return {role_id:itm.role};
                 }),

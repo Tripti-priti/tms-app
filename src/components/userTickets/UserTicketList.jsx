@@ -1,17 +1,78 @@
-import { Title } from '@mui/icons-material'
+import { Delete, Edit, Title } from '@mui/icons-material'
 import { Button, Card, CardContent, Grid2, TextField } from '@mui/material'
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import axios from 'axios';
+import moment from 'moment/moment';
 import React from 'react'
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const UserTicketList = () => {
     
   const [role, setProject] = useState("");
   const [description,setDescription]=useState("");
+  const [ticketList,setTicketList]=useState([]);
+  const fun_status = (status) =>{
+    let _status = '';
+    if(status==='p'||status==='P'){
+      _status='Pending';
+    }
+    return _status;
+  }
+  const fun_formateDate = (date) =>{
+    let _date = '';
+    _date = moment(date).format("DD-MM-YYYY")
+    return _date;
+  }
+    React.useEffect(() => {
+      fetchDetails();
+     
+    }, []);
+
+      const fetchDetails = async () => {
+        await axios.get(apiUrl+'/api/ticket').then((res) => {
+          console.log(res.data);
+
+          if(res.data){
+            let TicketList = res.data.map((item,index)=>{
+              return {
+                id:item._id,
+                srno:index+1,
+                ticketNo:item.ticket_no,
+                project:item.proj_id.name,
+                module:item.module_id.name,
+                process:item.process_id.name,
+                subProcess:item.sub_process,
+                task:item.ticket_desc,
+                status:fun_status(item.status),
+                createdOn:fun_formateDate(item.report_on),
+                createdBy:item.report_by.username,
+
+              }
+            });
+            setTicketList(TicketList);
+          }
+
+        }).catch((error) => {
+          console.log(error.message)
+        })
+      };
+
   const columns = [
-    {field:'srno',headerName:'Sr No',width:50 },
-    {field:'ticketNo',headerName:'Ticket No',width:150 },
+    {field:'srno',headerName:'Sr No',width:70 },
+    {field:'ticketNo',headerName:'Ticket No',width:150 
+      ,
+        renderCell: (params) => (
+          <>
+          <div style={{display:'flex',justifyContent:'space-around'}}>
+            {params.row.ticketNo}
+            <Link ><Delete style={{color:'#c31414'}} /></Link>
+            <Link ><Edit style={{color:'#494747'}} /></Link>
+          </div>
+          </>
+        )
+      },
     {field:'project',headerName:'Project',width:150 },
     {field:'module',headerName:'Module',width:150 },
     {field:'process',headerName:'Process',width:150 },
@@ -52,7 +113,7 @@ const UserTicketList = () => {
         </Card>
         <Card style={{marginTop:'5px'}}>
             <CardContent>
-            <DataGrid rows={[]} columns={columns} rowHeight={30}
+            <DataGrid rows={ticketList} columns={columns} rowHeight={30}
      slots={{
       toolbar: GridToolbar,
     }}

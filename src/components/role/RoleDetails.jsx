@@ -5,6 +5,7 @@ import RoleList from './RoleList';
 import axios from 'axios';
 import { Delete, Edit } from '@mui/icons-material';
 import AlertMessage from '../shared/AlertMessage';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const RoleDetails = () => {
   const [role, setRole] = useState("");
@@ -22,7 +23,7 @@ const saveRole=()=>{
 
   if (action === 'Create') {
  
-    axios.post('http://localhost:3001/api/role', {
+    axios.post(apiUrl+'/api/role', {
 
       "comp_id": "67322719306557f042aba5a7",
       "name" :role,
@@ -47,7 +48,7 @@ const saveRole=()=>{
   }
 else {
 
-  axios.put('http://localhost:3001/api/role/' + roleId, {
+  axios.put(apiUrl+'/api/role/' + roleId, {
     "comp_id": "67322719306557f042aba5a7",
     "name" :role,
     "description":description,
@@ -86,7 +87,7 @@ const handleClose = (event, reason) => {
   },[])
 
   const fetchUserList = ()=>{
-    axios.get('http://localhost:3001/api/role')
+    axios.get(apiUrl+'/api/role')
     .then((res)=>{
       
       if(res.data){
@@ -118,7 +119,7 @@ const columns = [
     
       <Link onClick={()=>{
         console.log(params.id)
-        axios.delete("http://localhost:3001/api/role/"+params.id)
+        axios.delete(apiUrl+"/api/role/"+params.id)
           .then(()=>{
             fetchUserList();
             setSeverity('success')
@@ -135,7 +136,7 @@ const columns = [
       }} ><Delete/></Link>
       <Link onClick={()=>{
         console.log(params.id)
-        axios.get("http://localhost:3001/api/role/"+params.id)
+        axios.get(apiUrl+"/api/role/"+params.id)
           .then((res)=>{
             let data = res.data;
             setRole(data.name);

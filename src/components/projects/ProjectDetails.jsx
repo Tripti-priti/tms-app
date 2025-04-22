@@ -5,9 +5,10 @@ import axios from 'axios';
 import { Delete, Edit } from '@mui/icons-material';
 import AlertMessage from '../shared/AlertMessage';
 import ProjectList from './ProjectList';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const ProjectDetails = () => {
-  const [role, setProject] = useState("");
+  const [project, setProject] = useState("");
   const [description,setDescription]=useState("");
   const [projectData,setProjectData] = useState([]);
   const [action,setAction]=useState("Create");
@@ -15,16 +16,16 @@ const ProjectDetails = () => {
   const [message, setMessage] = useState(false);
   const [severity, setSeverity] = useState('success');
   const [disabled, setDisabled] = useState(false);
-  const [roleId,setProjectId]=useState();
+  const [projectId,setProjectId]=useState();
 
   const saveProject=()=>{
   
     if (action === 'Create') {
    
-      axios.post('http://localhost:3001/api/project',
+      axios.post(apiUrl+'/api/project',
         {
           "comp_id": "67322719306557f042aba5a7",
-          "name" :role,
+          "name" :project,
           "description":description   
         }
     ).then((res) => {
@@ -44,9 +45,9 @@ const ProjectDetails = () => {
     }
   else {
   
-    axios.put('http://localhost:3001/api/project/' + roleId, {
+    axios.put(apiUrl+'/api/project/' + projectId, {
       "comp_id": "67322719306557f042aba5a7",
-      "name" :role,
+      "name" :project,
       "description":description,
       "mod_dt":Date.now()
     })
@@ -83,7 +84,7 @@ const ProjectDetails = () => {
     },[])
   
     const fetchUserList = ()=>{
-      axios.get('http://localhost:3001/api/project')
+      axios.get(apiUrl+'/api/project')
       .then((res)=>{
         
         if(res.data){
@@ -112,15 +113,15 @@ const ProjectDetails = () => {
     renderCell: (params) => (
       <>
       <div style={{display:'flex',justifyContent:'space-around'}}>
-        <Link onClick={()=>{DeleteProject(params.id)}} ><Delete/></Link>
-        <Link onClick={()=>{EditProject(params.id)}} ><Edit/></Link>
+        <Link onClick={()=>{DeleteProject(params.id)}} ><Delete style={{color:'#c31414'}} /></Link>
+        <Link onClick={()=>{EditProject(params.id)}} ><Edit style={{color:'#494747'}} /></Link>
       </div>
       </>
     ),
   },
   ];
   const EditProject = (id)=>{
-    axios.get("http://localhost:3001/api/project/"+id)
+    axios.get(apiUrl+"/api/project/"+id)
     .then((res)=>{
       let data = res.data;
       setProject(data.name);
@@ -135,7 +136,7 @@ const ProjectDetails = () => {
     })
   }
   const DeleteProject = (id) => {
-    axios.delete("http://localhost:3001/api/project/"+id)
+    axios.delete(apiUrl+"/api/project/"+id)
             .then(()=>{
               fetchUserList();
               setSeverity('success')
@@ -163,7 +164,7 @@ const ProjectDetails = () => {
                   helperText={""} error={false} size="small"
                   autoComplete="off" style={{ width: '96%' }}
                   disabled={disabled}
-                  value={role} onChange={(e) => setProject(e.target.value)} />
+                  value={project} onChange={(e) => setProject(e.target.value)} />
               </Grid2>
               <Grid2 size={{ xs: 2, sm: 4, md: 4 }} style={{ padding: 0, margin: 0 }}>
                 <TextField variant={'outlined'} label={"Description"}
